@@ -6,6 +6,7 @@ using Grpc.Core;
 using Max;
 using Prime;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,7 +18,13 @@ namespace client
 
         static async Task Main(string[] args)
         {
-            Channel channel = new Channel(target, ChannelCredentials.Insecure);
+            var clientCert = File.ReadAllText("ssl/client.crt");
+            var clientKey = File.ReadAllText("ssl/client.key");
+            var caCrt = File.ReadAllText("ssl/ca.crt");
+
+            var channelCredentials = new SslCredentials(caCrt, new KeyCertificatePair(clientCert, clientKey));
+
+            Channel channel = new Channel("localhost", 50051, channelCredentials); //new Channel(target, ChannelCredentials.Insecure)
 
             await channel.ConnectAsync().ContinueWith(task =>
             {
