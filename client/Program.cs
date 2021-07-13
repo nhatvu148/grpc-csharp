@@ -28,42 +28,75 @@ namespace client
             });
 
             //var client = new DummyService.DummyServiceClient(channel);
-            //var client = new CalculatorService.CalculatorServiceClient(channel);
-            //var request = new SumRequest()
-            //{
-            //    A = 3,
-            //    B = 15
-            //};
-            //var response = client.Sum(request);
 
+            //var client = new CalculatorService.CalculatorServiceClient(channel);
+            //CallCalculator(client);
 
             //var client = new PrimeNumberService.PrimeNumberServiceClient(channel);
-            //var request = new PrimeNumberDecompositionRequest()
-            //{
-            //    Number = 120
-            //};
-            //var response = client.PrimeNumberDecomposition(request);
-            //while (await response.ResponseStream.MoveNext())
-            //{
-            //    Console.WriteLine(response.ResponseStream.Current.PrimeFactor);
-            //    await Task.Delay(200);
-            //}
-
+            //await CallPrimeNumber(client);
 
             //var client = new AverageService.AverageServiceClient(channel);
-            //var stream = client.ComputeAverage();
-            //foreach (int number in Enumerable.Range(1, 4))
-            //{
-            //    var request = new AverageRequest() { Number = number };
+            //await CallAverage(client);
 
-            //    await stream.RequestStream.WriteAsync(request);
-            //}
-            //await stream.RequestStream.CompleteAsync();
-            //var response = await stream.ResponseAsync;
-            //Console.WriteLine(response.Result);
+            //var client = new FindMaxService.FindMaxServiceClient(channel);
+            //await CallMax(client);
 
+            var client = new GreetingService.GreetingServiceClient(channel);
+            //DoSimpleGreet(client);
+            //await DoManyGreetings(client);
+            //await DoLongGreet(client);
+            await DoGreetEveryone(client);
 
-            var client = new FindMaxService.FindMaxServiceClient(channel);
+            channel.ShutdownAsync().Wait();
+            Console.ReadKey();
+        }
+
+        public static void CallDummy()
+        {
+
+        }
+
+        public static void CallCalculator(CalculatorService.CalculatorServiceClient client)
+        {
+            var request = new SumRequest()
+            {
+                A = 3,
+                B = 15
+            };
+            var response = client.Sum(request);
+            Console.WriteLine(response.Result);
+        }
+
+        public static async Task CallPrimeNumber(PrimeNumberService.PrimeNumberServiceClient client)
+        {
+            var request = new PrimeNumberDecompositionRequest()
+            {
+                Number = 120
+            };
+            var response = client.PrimeNumberDecomposition(request);
+            while (await response.ResponseStream.MoveNext())
+            {
+                Console.WriteLine(response.ResponseStream.Current.PrimeFactor);
+                await Task.Delay(200);
+            }
+        }
+
+        public static async Task CallAverage(AverageService.AverageServiceClient client)
+        {
+            var stream = client.ComputeAverage();
+            foreach (int number in Enumerable.Range(1, 4))
+            {
+                var request = new AverageRequest() { Number = number };
+
+                await stream.RequestStream.WriteAsync(request);
+            }
+            await stream.RequestStream.CompleteAsync();
+            var response = await stream.ResponseAsync;
+            Console.WriteLine(response.Result);
+        }
+
+        public static async Task CallMax(FindMaxService.FindMaxServiceClient client)
+        {
             var stream = client.findMaximum();
 
             var responseReaderTask = Task.Run(async () =>
@@ -71,26 +104,13 @@ namespace client
                 while (await stream.ResponseStream.MoveNext())
                     Console.WriteLine(stream.ResponseStream.Current.Max);
             });
-
             int[] numbers = { 1, 5, 3, 6, 2, 20 };
-
             foreach (var number in numbers)
             {
                 await stream.RequestStream.WriteAsync(new FindMaxRequest() { Number = number });
             }
-
             await stream.RequestStream.CompleteAsync();
             await responseReaderTask;
-
-
-            //var client = new GreetingService.GreetingServiceClient(channel);
-            //DoSimpleGreet(client);
-            //await DoManyGreetings(client);
-            //await DoLongGreet(client);
-            //await DoGreetEveryone(client);
-
-            channel.ShutdownAsync().Wait();
-            Console.ReadKey();
         }
 
         public static void DoSimpleGreet(GreetingService.GreetingServiceClient client)
