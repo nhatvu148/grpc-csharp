@@ -2,6 +2,7 @@
 using Calculator;
 using Greet;
 using Grpc.Core;
+using Max;
 using Prime;
 using System;
 using System.IO;
@@ -20,8 +21,9 @@ namespace server
                 {
                     //Services = { CalculatorService.BindService(new CalculatorServiceImpl()) },
                     //Services = { GreetingService.BindService(new GreetingServiceImpl()) },
-                    Services = { AverageService.BindService(new AverageServiceImpl()) },
+                    //Services = { AverageService.BindService(new AverageServiceImpl()) },
                     //Services = { PrimeNumberService.BindService(new PrimeNumberServiceImpl()) },
+                    Services = { FindMaxService.BindService(new FindMaxServiceImpl()) },
                     Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
                 };
 

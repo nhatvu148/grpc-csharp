@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "proto", "proto", "{5F2599EE
 		calculator.proto = calculator.proto
 		dummy.proto = dummy.proto
 		greeting.proto = greeting.proto
+		max.proto = max.proto
 		prime.proto = prime.proto
 	EndProjectSection
 EndProject

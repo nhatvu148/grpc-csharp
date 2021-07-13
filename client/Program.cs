@@ -3,6 +3,7 @@ using Calculator;
 using Dummy;
 using Greet;
 using Grpc.Core;
+using Max;
 using Prime;
 using System;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace client
             //};
             //var response = client.Sum(request);
 
+
             //var client = new PrimeNumberService.PrimeNumberServiceClient(channel);
             //var request = new PrimeNumberDecompositionRequest()
             //{
@@ -47,21 +49,38 @@ namespace client
             //    await Task.Delay(200);
             //}
 
-            var client = new AverageService.AverageServiceClient(channel);
-            var stream = client.ComputeAverage();
 
-            foreach (int number in Enumerable.Range(1, 4))
+            //var client = new AverageService.AverageServiceClient(channel);
+            //var stream = client.ComputeAverage();
+            //foreach (int number in Enumerable.Range(1, 4))
+            //{
+            //    var request = new AverageRequest() { Number = number };
+
+            //    await stream.RequestStream.WriteAsync(request);
+            //}
+            //await stream.RequestStream.CompleteAsync();
+            //var response = await stream.ResponseAsync;
+            //Console.WriteLine(response.Result);
+
+
+            var client = new FindMaxService.FindMaxServiceClient(channel);
+            var stream = client.findMaximum();
+
+            var responseReaderTask = Task.Run(async () =>
             {
-                var request = new AverageRequest() { Number = number };
+                while (await stream.ResponseStream.MoveNext())
+                    Console.WriteLine(stream.ResponseStream.Current.Max);
+            });
 
-                await stream.RequestStream.WriteAsync(request);
+            int[] numbers = { 1, 5, 3, 6, 2, 20 };
+
+            foreach (var number in numbers)
+            {
+                await stream.RequestStream.WriteAsync(new FindMaxRequest() { Number = number });
             }
 
             await stream.RequestStream.CompleteAsync();
-
-            var response = await stream.ResponseAsync;
-
-            Console.WriteLine(response.Result);
+            await responseReaderTask;
 
 
             //var client = new GreetingService.GreetingServiceClient(channel);
