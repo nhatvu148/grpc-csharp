@@ -1,4 +1,5 @@
-﻿using Calculator;
+﻿using Average;
+using Calculator;
 using Dummy;
 using Greet;
 using Grpc.Core;
@@ -34,17 +35,33 @@ namespace client
             //};
             //var response = client.Sum(request);
 
-            var client = new PrimeNumberService.PrimeNumberServiceClient(channel);
-            var request = new PrimeNumberDecompositionRequest()
+            //var client = new PrimeNumberService.PrimeNumberServiceClient(channel);
+            //var request = new PrimeNumberDecompositionRequest()
+            //{
+            //    Number = 120
+            //};
+            //var response = client.PrimeNumberDecomposition(request);
+            //while (await response.ResponseStream.MoveNext())
+            //{
+            //    Console.WriteLine(response.ResponseStream.Current.PrimeFactor);
+            //    await Task.Delay(200);
+            //}
+
+            var client = new AverageService.AverageServiceClient(channel);
+            var stream = client.ComputeAverage();
+
+            foreach (int number in Enumerable.Range(1, 4))
             {
-                Number = 120
-            };
-            var response = client.PrimeNumberDecomposition(request);
-            while (await response.ResponseStream.MoveNext())
-            {
-                Console.WriteLine(response.ResponseStream.Current.PrimeFactor);
-                await Task.Delay(200);
+                var request = new AverageRequest() { Number = number };
+
+                await stream.RequestStream.WriteAsync(request);
             }
+
+            await stream.RequestStream.CompleteAsync();
+
+            var response = await stream.ResponseAsync;
+
+            Console.WriteLine(response.Result);
 
 
             //var client = new GreetingService.GreetingServiceClient(channel);
