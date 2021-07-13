@@ -16,3 +16,7 @@
 - https://github.com/ktr0731/evans
 - Run: ./evans.exe -r -p 50051 (turn off ssl first)
 - Or run: .\evans.exe --proto .\greeting.proto
+
+# Reference:
+
+- https://github.com/nhatvu148/grpc-crud-csharp
