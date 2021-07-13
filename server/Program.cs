@@ -2,6 +2,8 @@
 using Calculator;
 using Greet;
 using Grpc.Core;
+using Grpc.Reflection;
+using Grpc.Reflection.V1Alpha;
 using Max;
 using Prime;
 using Sqrt;
@@ -25,9 +27,11 @@ namespace server
                 var cacert = File.ReadAllText("ssl/ca.crt");
                 var credentials = new SslServerCredentials(new List<KeyCertificatePair>() { keypair }, cacert, true);
 
+                var reflectionServiceImpl = new ReflectionServiceImpl(GreetingService.Descriptor, ServerReflection.Descriptor);
+
                 server = new Server()
                 {
-                    Services = { GreetingService.BindService(new GreetingServiceImpl()) },
+                    Services = { GreetingService.BindService(new GreetingServiceImpl()), ServerReflection.BindService(reflectionServiceImpl) },
                     //Services = { CalculatorService.BindService(new CalculatorServiceImpl()) },
                     //Services = { AverageService.BindService(new AverageServiceImpl()) },
                     //Services = { PrimeNumberService.BindService(new PrimeNumberServiceImpl()) },
