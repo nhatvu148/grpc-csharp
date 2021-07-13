@@ -2,6 +2,7 @@
 using Dummy;
 using Greet;
 using Grpc.Core;
+using Prime;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,18 +27,29 @@ namespace client
 
             //var client = new DummyService.DummyServiceClient(channel);
             //var client = new CalculatorService.CalculatorServiceClient(channel);
-            var client = new GreetingService.GreetingServiceClient(channel);
-
             //var request = new SumRequest()
             //{
             //    A = 3,
             //    B = 15
             //};
-
             //var response = client.Sum(request);
 
+            var client = new PrimeNumberService.PrimeNumberServiceClient(channel);
+            var request = new PrimeNumberDecompositionRequest()
+            {
+                Number = 120
+            };
+            var response = client.PrimeNumberDecomposition(request);
+            while (await response.ResponseStream.MoveNext())
+            {
+                Console.WriteLine(response.ResponseStream.Current.PrimeFactor);
+                await Task.Delay(200);
+            }
+
+
+            //var client = new GreetingService.GreetingServiceClient(channel);
             //DoSimpleGreet(client);
-            await DoManyGreetings(client);
+            //await DoManyGreetings(client);
             //await DoLongGreet(client);
             //await DoGreetEveryone(client);
 
