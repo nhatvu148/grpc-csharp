@@ -14,7 +14,7 @@ namespace client
 {
     class Program
     {
-        const string target = "127.0.0.1:50051";
+        const string target = "127.0.0.1:43567";
 
         static async Task Main(string[] args)
         {
@@ -24,7 +24,7 @@ namespace client
 
             var channelCredentials = new SslCredentials(caCrt, new KeyCertificatePair(clientCert, clientKey));
 
-            Channel channel = new Channel("localhost", 50051, channelCredentials); //new Channel(target, ChannelCredentials.Insecure)
+            Channel channel = new Channel("localhost", 43567, channelCredentials); //new Channel(target, ChannelCredentials.Insecure)
 
             await channel.ConnectAsync().ContinueWith(task =>
             {
@@ -50,9 +50,9 @@ namespace client
 
             var client = new GreetingService.GreetingServiceClient(channel);
             //DoSimpleGreet(client);
-            //await DoManyGreetings(client);
+            await DoManyGreetings(client);
             //await DoLongGreet(client);
-            await DoGreetEveryone(client);
+            //await DoGreetEveryone(client);
 
             channel.ShutdownAsync().Wait();
             Console.ReadKey();
